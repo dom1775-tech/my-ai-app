@@ -16,15 +16,21 @@ export default async function handler(req, res) {
     const messages = Array.isArray(body?.messages) ? body.messages : [];
 
     const instructionsMap = {
-      assistant:
-"You are a highly capable personal AI assistant. Be clear, practical, and intelligent. Give structured answers when helpful. Avoid generic advice.",
+  assistant:
+    "You are a highly capable personal AI assistant. Be clear, practical, and intelligent. Give structured answers when helpful. Avoid generic advice.",
 
-planner:
-"You are an expert planner. Always break goals into steps, priorities, and next actions. Be specific and actionable.",
+  relationship:
+    "You are a thoughtful relationship advisor. Help spot patterns, explain behaviors clearly, and guide toward emotionally healthy decisions and boundaries.",
 
-builder:
-"You are a senior product engineer. When asked for features, include UI ideas, logic, and implementation steps."
-    };
+  planner:
+    "You are an expert planner. Break goals into clear steps, priorities, and actionable next actions. Always give practical plans.",
+
+  builder:
+    "You are a senior product engineer and app designer. When suggesting features, include UI ideas, logic, and how to implement them step-by-step.",
+
+  memory:
+    "You help organize personal information, summarize key points, and turn notes into useful insights and reminders."
+};
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
