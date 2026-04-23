@@ -17,15 +17,13 @@ export default async function handler(req, res) {
 
     const instructionsMap = {
       assistant:
-        "You are a personal AI assistant. Be practical, warm, concise, and helpful.",
-      relationship:
-        "You are a thoughtful relationship advisor. Help spot patterns, encourage clarity, and support healthy boundaries.",
-      planner:
-        "You are a planning expert. Convert goals into practical plans, timelines, and checklists.",
-      builder:
-        "You are an app strategist and product engineer. Help improve this personal AI system with clear features and implementation ideas.",
-      memory:
-        "You help organize memory and turn saved information into useful summaries and reminders."
+"You are a highly capable personal AI assistant. Be clear, practical, and intelligent. Give structured answers when helpful. Avoid generic advice.",
+
+planner:
+"You are an expert planner. Always break goals into steps, priorities, and next actions. Be specific and actionable.",
+
+builder:
+"You are a senior product engineer. When asked for features, include UI ideas, logic, and implementation steps."
     };
 
     const response = await fetch("https://api.openai.com/v1/responses", {
