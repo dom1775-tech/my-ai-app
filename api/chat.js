@@ -1,19 +1,17 @@
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   if (!OPENAI_API_KEY) {
-    res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
-    return;
+    return res.status(500).json({ error: "Missing OPENAI_API_KEY environment variable" });
   }
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const tab = body?.tab || "assistant";
-    const model = body?.model || "gpt-4.1-mini";
+    const model = body?.model || "gpt-5.4";
     const input = body?.input || "";
     const messages = Array.isArray(body?.messages) ? body.messages : [];
 
@@ -55,13 +53,40 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      res.status(response.status).json({ error: data });
-      return;
+      return res.status(response.status).json({ error: data });
     }
 
-    const reply = data.output_text || "No reply returned.";
-    res.status(200).json({ reply });
+    let reply = data.output_text;
+
+    if (!reply && Array.isArray(data.output)) {
+      const texts = [];
+
+      for (const item of data.output) {
+        if (Array.isArray(item.content)) {
+          for (const part of item.content) {
+            if (part.type === "output_text" && part.text) {
+              texts.push(part.text);
+            } else if (part.type === "refusal" && part.refusal) {
+              texts.push(part.refusal);
+            }
+          }
+        }
+      }
+
+      reply = texts.join("\n").trim();
+    }
+
+    if (!reply) {
+      return res.status(500).json({
+        error: "No reply returned.",
+        debug: data
+      });
+    }
+
+    return res.status(200).json({ reply });
   } catch (error) {
-    res.status(500).json({ error: error.message || "Unknown server error" });
+    return res.status(500).json({
+      error: error.message || "Unknown server error"
+    });
   }
 }
