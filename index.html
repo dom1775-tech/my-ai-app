@@ -4,630 +4,941 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1220" />
-  <title>My AI Team</title>
+  <title>My Personal AI System</title>
   <style>
     :root{
-      --bg:#0b1220;
-      --panel:#111827;
-      --panel-2:#1f2937;
-      --text:#f3f4f6;
-      --muted:#9ca3af;
+      --bg:#07101d;
+      --panel:#101827;
+      --panel2:#172235;
+      --panel3:#0f172a;
+      --text:#eef2ff;
+      --muted:#9fb0cc;
+      --line:#2a3a54;
       --accent:#60a5fa;
-      --accent-2:#34d399;
-      --danger:#f87171;
-      --border:#334155;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --accent2:#34d399;
+      --accent3:#f9a8d4;
+      --warn:#fbbf24;
+      --danger:#fb7185;
       --radius:18px;
+      --shadow:0 16px 40px rgba(0,0,0,.28);
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{height:100%}
     body{
       margin:0;
       font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      background:linear-gradient(180deg,#08101d 0%, #0b1220 100%);
+      background:linear-gradient(180deg,#07101d 0%, #0a1220 60%, #0d1524 100%);
       color:var(--text);
     }
     .app{
-      max-width:900px;
+      max-width:980px;
       margin:0 auto;
       min-height:100dvh;
       display:grid;
-      grid-template-rows:auto auto 1fr auto;
-      padding:12px;
+      grid-template-rows:auto auto 1fr auto auto;
       gap:10px;
+      padding:12px 12px calc(10px + env(safe-area-inset-bottom));
     }
-    .topbar, .panel, .composer, .settings{
-      background:rgba(17,24,39,.92);
-      border:1px solid var(--border);
+    .card{
+      background:rgba(16,24,39,.92);
+      border:1px solid var(--line);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      backdrop-filter: blur(8px);
+      backdrop-filter:blur(10px);
     }
-    .topbar{
-      padding:14px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+    .top{
       position:sticky;
-      top: max(env(safe-area-inset-top), 0px);
-      z-index:3;
-    }
-    .brand{
+      top:max(0px, env(safe-area-inset-top));
+      z-index:10;
+      padding:14px;
       display:flex;
-      align-items:center;
       gap:12px;
-      min-width:0;
+      justify-content:space-between;
+      align-items:center;
     }
+    .brand{display:flex;gap:12px;align-items:center;min-width:0}
     .logo{
-      width:42px;height:42px;border-radius:14px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      display:grid;place-items:center;
-      font-size:22px;font-weight:700;color:#08101d;
-      flex:0 0 auto;
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#08101d;font-weight:800;font-size:18px;
+      display:grid;place-items:center;flex:0 0 auto;
     }
-    .brand h1{margin:0;font-size:18px;line-height:1.1}
-    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-    .row{display:flex;gap:8px;align-items:center}
-    button, select, input, textarea{
-      font:inherit;
-    }
+    .brand h1{margin:0;font-size:18px}
+    .brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    button,input,textarea,select{font:inherit}
     button{
       border:none;
-      background:var(--panel-2);
       color:var(--text);
-      border-radius:14px;
+      background:var(--panel2);
       padding:12px 14px;
+      border-radius:14px;
       cursor:pointer;
     }
     button.primary{
-      background:linear-gradient(135deg,var(--accent),#3b82f6);
-      color:#08101d;
-      font-weight:700;
-    }
-    button.ghost{
-      border:1px solid var(--border);
-      background:transparent;
-    }
-    button:active{transform:translateY(1px)}
-    .bot-strip{
-      display:flex;
-      gap:8px;
-      overflow:auto;
-      padding-bottom:2px;
-    }
-    .bot-chip{
-      white-space:nowrap;
-      padding:12px 14px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      background:rgba(31,41,55,.9);
-      color:var(--text);
-    }
-    .bot-chip.active{
       background:linear-gradient(135deg,var(--accent),#2563eb);
       color:#08101d;
+      font-weight:800;
+    }
+    button.secondary{
+      background:linear-gradient(135deg,var(--accent2),#10b981);
+      color:#08101d;
+      font-weight:800;
+    }
+    button.ghost{
+      background:transparent;
+      border:1px solid var(--line);
+    }
+    button.soft{
+      background:#0f172a;
+      border:1px solid var(--line);
+    }
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+      padding:8px;
+      position:sticky;
+      top:calc(max(0px, env(safe-area-inset-top)) + 74px);
+      z-index:9;
+    }
+    .tab{
+      padding:12px 8px;
+      border-radius:16px;
+      text-align:center;
+      font-size:13px;
+      border:1px solid var(--line);
+      background:#0d1628;
+      color:var(--muted);
       font-weight:700;
+    }
+    .tab.active{
+      background:linear-gradient(135deg,#1d4ed8,var(--accent));
+      color:#08101d;
       border-color:transparent;
     }
-    .panel{
-      padding:12px;
-      display:grid;
-      grid-template-rows:auto 1fr;
+    .main{
       min-height:48dvh;
+      padding:12px;
     }
-    .bot-header{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-      padding:4px 2px 12px;
-      border-bottom:1px solid rgba(148,163,184,.18);
-    }
-    .bot-header h2{margin:0;font-size:17px}
-    .bot-header p{margin:4px 0 0;color:var(--muted);font-size:13px;max-width:60ch}
-    .messages{
-      padding:10px 2px 4px;
-      overflow:auto;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height:30dvh;
-    }
-    .msg{
-      max-width:85%;
-      padding:12px 14px;
+    .screen{display:none;gap:12px}
+    .screen.active{display:grid}
+    .hero{
+      padding:14px;
+      background:linear-gradient(135deg,rgba(96,165,250,.14),rgba(52,211,153,.09));
+      border:1px solid rgba(96,165,250,.18);
       border-radius:18px;
-      line-height:1.45;
-      white-space:pre-wrap;
-      word-wrap:break-word;
     }
-    .msg.user{
-      align-self:flex-end;
-      background:linear-gradient(135deg,#2563eb,#60a5fa);
-      color:#08101d;
-      border-bottom-right-radius:6px;
-      font-weight:600;
-    }
-    .msg.ai{
-      align-self:flex-start;
-      background:#172033;
-      border:1px solid rgba(148,163,184,.18);
-      border-bottom-left-radius:6px;
-    }
-    .msg.system{
-      align-self:center;
-      background:transparent;
-      border:1px dashed rgba(148,163,184,.28);
-      color:var(--muted);
-      font-size:12px;
-      max-width:100%;
-    }
-    .composer{
-      padding:10px;
-      display:grid;
-      gap:8px;
-    }
-    .composer textarea{
-      width:100%;
-      min-height:110px;
-      max-height:240px;
-      resize:vertical;
-      border-radius:16px;
-      padding:14px;
-      background:#0f172a;
-      color:var(--text);
-      border:1px solid var(--border);
-    }
-    .composer .actions{
-      display:flex;
-      gap:8px;
-      justify-content:space-between;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .settings{
-      padding:14px;
-      display:none;
-      gap:12px;
-    }
-    .settings.open{display:grid}
-    .grid{
+    .hero h2{margin:0 0 6px;font-size:18px}
+    .hero p{margin:0;color:var(--muted);line-height:1.45}
+    .split{
       display:grid;
       grid-template-columns:1fr;
       gap:12px;
     }
-    .field{
-      display:grid;
-      gap:6px;
+    .section{
+      padding:12px;
+      border-radius:18px;
+      background:#0e1728;
+      border:1px solid var(--line);
     }
-    .field label{
+    .section h3{
+      margin:0 0 8px;
+      font-size:16px;
+    }
+    .section p.meta,.meta{
+      margin:0 0 8px;
       color:var(--muted);
       font-size:13px;
+      line-height:1.45;
     }
-    .field input, .field select{
+    .chatHeader{
+      display:flex;justify-content:space-between;gap:8px;align-items:flex-start;
+      padding-bottom:10px;border-bottom:1px solid rgba(159,176,204,.14);
+      margin-bottom:10px;
+    }
+    .messages{
+      display:flex;flex-direction:column;gap:10px;
+      min-height:240px;max-height:44dvh;overflow:auto;padding-right:2px;
+    }
+    .msg{
+      max-width:86%;
+      white-space:pre-wrap;
+      word-break:break-word;
+      line-height:1.45;
+      padding:12px 14px;border-radius:18px;
+    }
+    .msg.user{
+      align-self:flex-end;
+      background:linear-gradient(135deg,#2563eb,#60a5fa);
+      color:#08101d;font-weight:700;border-bottom-right-radius:6px;
+    }
+    .msg.ai{
+      align-self:flex-start;
+      background:#152033;border:1px solid rgba(159,176,204,.14);border-bottom-left-radius:6px;
+    }
+    .msg.system{
+      align-self:center;max-width:100%;
+      border:1px dashed rgba(159,176,204,.25);
+      color:var(--muted);font-size:12px;background:transparent;
+    }
+    textarea, input, select{
       width:100%;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:#0f172a;
+      border:1px solid var(--line);
+      background:var(--panel3);
       color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
     }
-    .small{font-size:12px;color:var(--muted);line-height:1.45}
-    .danger{color:var(--danger)}
-    .footer-note{color:var(--muted);font-size:12px;text-align:center;padding-bottom:max(6px, env(safe-area-inset-bottom))}
-    @media (min-width: 760px){
-      .grid{grid-template-columns:1fr 1fr}
+    textarea{min-height:110px;resize:vertical}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    .field{display:grid;gap:6px}
+    .field label{font-size:13px;color:var(--muted)}
+    .pill{
+      display:inline-block;padding:7px 10px;border-radius:999px;
+      background:#11203a;border:1px solid var(--line);font-size:12px;color:var(--muted)
+    }
+    .list{display:grid;gap:8px}
+    .item{
+      border:1px solid var(--line);
+      background:#0c1424;
+      border-radius:14px;
+      padding:12px;
+    }
+    .item h4{margin:0 0 6px;font-size:15px}
+    .item p{margin:0;color:var(--muted);line-height:1.45}
+    .item .time{font-size:12px;color:var(--muted);margin-top:8px}
+    .toolbar{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .tiny{font-size:12px;color:var(--muted);line-height:1.45}
+    .footer{
+      text-align:center;color:var(--muted);font-size:12px;padding:0 8px;
+    }
+    .hide{display:none!important}
+    @media (min-width:780px){
+      .split.two{grid-template-columns:1.2fr .8fr}
+      .grid.two{grid-template-columns:1fr 1fr}
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="topbar">
+    <div class="top card">
       <div class="brand">
         <div class="logo">AI</div>
         <div>
-          <h1>My AI Team</h1>
-          <p>Your personal bot squad for thinking, planning, and building.</p>
+          <h1>My Personal AI System</h1>
+          <p>Assistant, relationship support, planning, memory, and app building in one place.</p>
         </div>
       </div>
       <div class="row">
-        <button class="ghost" id="settingsBtn">Settings</button>
+        <button class="ghost" id="settingsToggle">Settings</button>
+        <button class="ghost" id="exportAllBtn">Export</button>
       </div>
     </div>
 
-    <div class="bot-strip" id="botStrip"></div>
+    <div class="tabs card" id="tabs"></div>
 
-    <div class="panel">
-      <div class="bot-header">
+    <div class="main card">
+      <div id="screen-assistant" class="screen active"></div>
+      <div id="screen-relationship" class="screen"></div>
+      <div id="screen-planner" class="screen"></div>
+      <div id="screen-builder" class="screen"></div>
+      <div id="screen-memory" class="screen"></div>
+    </div>
+
+    <div class="card section hide" id="settingsPanel">
+      <div class="toolbar">
         <div>
-          <h2 id="activeBotName"></h2>
-          <p id="activeBotDesc"></p>
-        </div>
-        <button class="ghost" id="clearBtn">Clear Chat</button>
-      </div>
-      <div class="messages" id="messages"></div>
-    </div>
-
-    <div class="composer">
-      <textarea id="prompt" placeholder="Ask your AI bot anything..."></textarea>
-      <div class="actions">
-        <div class="row">
-          <button class="ghost" id="savePromptBtn">Save Draft</button>
-          <button class="ghost" id="newIdeaBtn">Prompt Idea</button>
-        </div>
-        <div class="row">
-          <button class="ghost" id="exportBtn">Export</button>
-          <button class="primary" id="sendBtn">Send</button>
+          <h3 style="margin:0">Settings</h3>
+          <p class="meta">This app works immediately in local mode. Connect a real AI API later for stronger responses.</p>
         </div>
       </div>
-    </div>
-
-    <div class="settings" id="settingsPanel">
-      <div class="grid">
+      <div class="grid two">
         <div class="field">
-          <label>AI mode</label>
-          <select id="modeSelect">
+          <label>AI Mode</label>
+          <select id="aiMode">
             <option value="local">Local smart fallback</option>
             <option value="openai">OpenAI-compatible API</option>
           </select>
         </div>
         <div class="field">
-          <label>Model name</label>
-          <input id="modelInput" placeholder="e.g. gpt-4.1-mini" />
+          <label>Model</label>
+          <input id="modelInput" placeholder="gpt-4.1-mini" />
         </div>
         <div class="field">
-          <label>API base URL</label>
-          <input id="baseUrlInput" placeholder="e.g. https://api.openai.com/v1" />
+          <label>API Base URL</label>
+          <input id="baseUrlInput" placeholder="https://api.openai.com/v1" />
         </div>
         <div class="field">
-          <label>API key</label>
-          <input id="apiKeyInput" type="password" placeholder="Paste your key here" />
+          <label>API Key</label>
+          <input id="apiKeyInput" type="password" placeholder="Paste API key" />
         </div>
       </div>
-      <div class="small">
-        This app works immediately in <strong>Local smart fallback</strong> mode. To make it truly powerful, switch to
-        <strong>OpenAI-compatible API</strong> and add your API details.
-      </div>
-      <div class="small danger">
-        Your settings are stored only in your browser on this device.
-      </div>
+      <div class="tiny">Everything stays in your browser on this device unless you export it.</div>
     </div>
 
-    <div class="footer-note">Add this page to your Home Screen in Safari for an app-like feel.</div>
+    <div class="footer">Tip: after you replace your hosted <strong>index.html</strong>, refresh your browser and Home Screen app to see updates.</div>
   </div>
 
-  <script>
-    const bots = [
-      {
-        id: "assistant",
-        name: "General Assistant",
-        desc: "Balanced help for everyday questions, ideas, and decisions.",
-        system: "You are a versatile personal assistant. Be practical, clear, concise, and helpful. Ask one smart follow-up only when truly needed."
-      },
-      {
-        id: "thinker",
-        name: "Deep Thinker",
-        desc: "Breaks down problems, explores options, and thinks through hard decisions.",
-        system: "You are a deep reasoning partner. Break down complex problems, list assumptions, explore tradeoffs, and end with the clearest next step."
-      },
-      {
-        id: "planner",
-        name: "Planner",
-        desc: "Turns messy goals into clear steps, timelines, and checklists.",
-        system: "You are a planning expert. Turn vague goals into step-by-step plans with milestones, priorities, and the fastest realistic next actions."
-      },
-      {
-        id: "builder",
-        name: "App Builder",
-        desc: "Helps improve this app with features, UI ideas, and build steps.",
-        system: "You are an expert product designer and app engineer. Help extend this app. Suggest specific features, UX improvements, architecture ideas, and implementation steps."
-      }
-    ];
+<script>
+const STORAGE_KEY = "personal-ai-system-v2";
 
-    const storeKey = "my-ai-team-v1";
-    const els = {
-      botStrip: document.getElementById("botStrip"),
-      activeBotName: document.getElementById("activeBotName"),
-      activeBotDesc: document.getElementById("activeBotDesc"),
-      messages: document.getElementById("messages"),
-      prompt: document.getElementById("prompt"),
-      sendBtn: document.getElementById("sendBtn"),
-      clearBtn: document.getElementById("clearBtn"),
-      exportBtn: document.getElementById("exportBtn"),
-      savePromptBtn: document.getElementById("savePromptBtn"),
-      newIdeaBtn: document.getElementById("newIdeaBtn"),
-      settingsBtn: document.getElementById("settingsBtn"),
-      settingsPanel: document.getElementById("settingsPanel"),
-      modeSelect: document.getElementById("modeSelect"),
-      modelInput: document.getElementById("modelInput"),
-      baseUrlInput: document.getElementById("baseUrlInput"),
-      apiKeyInput: document.getElementById("apiKeyInput")
+const tabs = [
+  {id:"assistant", label:"Assistant", icon:"💬"},
+  {id:"relationship", label:"Relationship", icon:"❤️"},
+  {id:"planner", label:"Planner", icon:"📅"},
+  {id:"builder", label:"Builder", icon:"🛠️"},
+  {id:"memory", label:"Memory", icon:"🧠"}
+];
+
+const screenPrompts = {
+  assistant: "You are a personal AI assistant. Be practical, warm, concise, and helpful.",
+  relationship: "You are a thoughtful relationship advisor. Help spot patterns, encourage clarity, and support healthy boundaries.",
+  planner: "You are a planning expert. Convert goals into practical plans, timelines, and checklists.",
+  builder: "You are an app strategist and product engineer. Help improve this personal AI system with clear features and implementation ideas.",
+  memory: "You help organize memory and turn saved information into useful summaries and reminders."
+};
+
+const defaultState = {
+  activeTab: "assistant",
+  settingsOpen: false,
+  settings: {
+    mode: "local",
+    model: "gpt-4.1-mini",
+    baseUrl: "https://api.openai.com/v1",
+    apiKey: ""
+  },
+  chats: {
+    assistant: [{role:"system", content:"Ask me anything. I’m your general assistant."}],
+    builder: [{role:"system", content:"Tell me what you want to add to the app next."}]
+  },
+  relationship: {
+    entries: [],
+    currentText: "",
+    currentMood: "Okay",
+    currentType: "Reflection"
+  },
+  planner: {
+    goal: "",
+    tasks: [],
+    weeklyFocus: "",
+    notes: ""
+  },
+  memory: {
+    profile: "",
+    pinned: [],
+    currentPinTitle: "",
+    currentPinText: ""
+  }
+};
+
+function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+function loadState(){
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return {
+      ...clone(defaultState),
+      ...raw,
+      settings: {...clone(defaultState.settings), ...(raw.settings || {})},
+      chats: {...clone(defaultState.chats), ...(raw.chats || {})},
+      relationship: {...clone(defaultState.relationship), ...(raw.relationship || {})},
+      planner: {...clone(defaultState.planner), ...(raw.planner || {})},
+      memory: {...clone(defaultState.memory), ...(raw.memory || {})}
     };
+  } catch (e) {
+    return clone(defaultState);
+  }
+}
 
-    const defaultState = {
-      activeBot: "assistant",
-      draft: "",
-      settings: {
-        mode: "local",
-        model: "gpt-4.1-mini",
-        baseUrl: "https://api.openai.com/v1",
-        apiKey: ""
-      },
-      chats: {
-        assistant: [{role:"system", content:"Welcome to your AI Team. Pick a bot and start chatting."}],
-        thinker: [{role:"system", content:"Ask me something complex and I’ll help break it down."}],
-        planner: [{role:"system", content:"Give me a goal and I’ll turn it into a plan."}],
-        builder: [{role:"system", content:"Tell me what feature you want next, and I’ll help design it."}]
-      }
+let state = loadState();
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"]/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"
+  }[s]));
+}
+
+function nowLabel(){
+  return new Date().toLocaleString([], {dateStyle:"medium", timeStyle:"short"});
+}
+
+function setTab(tabId){
+  state.activeTab = tabId;
+  saveState();
+  render();
+}
+
+function renderTabs(){
+  const wrap = document.getElementById("tabs");
+  wrap.innerHTML = "";
+  tabs.forEach(tab => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (state.activeTab === tab.id ? " active" : "");
+    btn.innerHTML = `<div>${tab.icon}</div><div>${escapeHtml(tab.label)}</div>`;
+    btn.onclick = () => setTab(tab.id);
+    wrap.appendChild(btn);
+  });
+}
+
+function renderAllScreens(){
+  document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
+  document.getElementById("screen-" + state.activeTab).classList.add("active");
+  renderAssistant();
+  renderRelationship();
+  renderPlanner();
+  renderBuilder();
+  renderMemory();
+  renderSettings();
+}
+
+function renderMessages(targetId, chatKey, title, desc){
+  const root = document.getElementById(targetId);
+  const chat = state.chats[chatKey] || [];
+  root.innerHTML = `
+    <div class="hero">
+      <h2>${escapeHtml(title)}</h2>
+      <p>${escapeHtml(desc)}</p>
+    </div>
+    <div class="section">
+      <div class="chatHeader">
+        <div>
+          <h3>${escapeHtml(title)} Chat</h3>
+          <p class="meta">Use local mode now, or connect a real AI later in Settings.</p>
+        </div>
+        <div class="row">
+          <button class="ghost" id="${chatKey}-idea">Prompt Idea</button>
+          <button class="ghost" id="${chatKey}-clear">Clear Chat</button>
+        </div>
+      </div>
+      <div class="messages" id="${chatKey}-messages"></div>
+      <div class="grid" style="margin-top:10px">
+        <textarea id="${chatKey}-input" placeholder="Type your message..."></textarea>
+        <div class="toolbar">
+          <div class="tiny">Saved locally on this device.</div>
+          <div class="row">
+            <button class="soft" id="${chatKey}-save-draft">Save Draft</button>
+            <button class="primary" id="${chatKey}-send">Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const messagesEl = document.getElementById(`${chatKey}-messages`);
+  chat.forEach(msg => {
+    const div = document.createElement("div");
+    div.className = "msg " + (msg.role === "user" ? "user" : msg.role === "system" ? "system" : "ai");
+    div.innerHTML = escapeHtml(msg.content);
+    messagesEl.appendChild(div);
+  });
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+
+  document.getElementById(`${chatKey}-input`).value = state[`${chatKey}Draft`] || "";
+  document.getElementById(`${chatKey}-send`).onclick = () => sendChat(chatKey);
+  document.getElementById(`${chatKey}-clear`).onclick = () => {
+    state.chats[chatKey] = [{role:"system", content: chatKey === "builder" ? "Builder chat cleared." : "Chat cleared."}];
+    saveState(); renderAllScreens();
+  };
+  document.getElementById(`${chatKey}-save-draft`).onclick = () => {
+    state[`${chatKey}Draft`] = document.getElementById(`${chatKey}-input`).value;
+    saveState();
+    state.chats[chatKey].push({role:"system", content:"Draft saved on this device."});
+    saveState(); renderAllScreens();
+  };
+  document.getElementById(`${chatKey}-idea`).onclick = () => {
+    const ideas = {
+      assistant: "Help me think through what I should focus on today.",
+      builder: "What is the best next feature to add to this app, and how should it work?"
     };
+    document.getElementById(`${chatKey}-input`).value = ideas[chatKey] || "";
+  };
+}
 
-    function loadState(){
-      try {
-        return {...defaultState, ...JSON.parse(localStorage.getItem(storeKey) || "{}")};
-      } catch(e){
-        return structuredClone(defaultState);
-      }
-    }
+function renderAssistant(){
+  renderMessages("screen-assistant","assistant","Assistant","General help for questions, decisions, writing, and everyday support.");
+}
 
-    let state = loadState();
+function renderBuilder(){
+  const root = document.getElementById("screen-builder");
+  root.innerHTML = `
+    <div class="hero">
+      <h2>Builder</h2>
+      <p>Ask for new features, UI changes, smarter workflows, or whole new tools you want inside the app.</p>
+    </div>
+  `;
+  const section = document.createElement("div");
+  section.className = "split two";
+  section.innerHTML = `
+    <div class="section" id="builder-chat-holder"></div>
+    <div class="section">
+      <h3>Suggested next upgrades</h3>
+      <div class="list">
+        <div class="item"><h4>Password Lock</h4><p>Add a simple local passcode screen for privacy.</p></div>
+        <div class="item"><h4>Custom Bots</h4><p>Create your own bots with custom instructions and names.</p></div>
+        <div class="item"><h4>Cloud Sync Later</h4><p>Add sign-in and storage when you’re ready for a more advanced version.</p></div>
+        <div class="item"><h4>Voice Input</h4><p>Use speech-to-text on supported browsers for faster journaling and planning.</p></div>
+      </div>
+    </div>
+  `;
+  root.appendChild(section);
+  renderMessages("builder-chat-holder","builder","App Builder","This bot helps you design the next versions of your app.");
+}
 
-    function saveState(){
-      localStorage.setItem(storeKey, JSON.stringify(state));
-    }
+function renderRelationship(){
+  const root = document.getElementById("screen-relationship");
+  const entries = [...state.relationship.entries].reverse();
+  root.innerHTML = `
+    <div class="hero">
+      <h2>Relationship</h2>
+      <p>Track what happened, how you felt, and what patterns you’re noticing. This helps you reflect more clearly over time.</p>
+    </div>
+    <div class="split two">
+      <div class="section">
+        <h3>New entry</h3>
+        <div class="grid two">
+          <div class="field">
+            <label>Type</label>
+            <select id="relType">
+              <option ${state.relationship.currentType==="Reflection"?"selected":""}>Reflection</option>
+              <option ${state.relationship.currentType==="Red Flag"?"selected":""}>Red Flag</option>
+              <option ${state.relationship.currentType==="Green Flag"?"selected":""}>Green Flag</option>
+              <option ${state.relationship.currentType==="Conflict"?"selected":""}>Conflict</option>
+              <option ${state.relationship.currentType==="Win"?"selected":""}>Win</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Mood</label>
+            <select id="relMood">
+              <option ${state.relationship.currentMood==="Great"?"selected":""}>Great</option>
+              <option ${state.relationship.currentMood==="Okay"?"selected":""}>Okay</option>
+              <option ${state.relationship.currentMood==="Confused"?"selected":""}>Confused</option>
+              <option ${state.relationship.currentMood==="Sad"?"selected":""}>Sad</option>
+              <option ${state.relationship.currentMood==="Anxious"?"selected":""}>Anxious</option>
+              <option ${state.relationship.currentMood==="Angry"?"selected":""}>Angry</option>
+            </select>
+          </div>
+        </div>
+        <textarea id="relText" placeholder="What happened? What did you notice? How did it make you feel?">${escapeHtml(state.relationship.currentText)}</textarea>
+        <div class="toolbar" style="margin-top:8px">
+          <div class="tiny">Use this like a private relationship journal and pattern tracker.</div>
+          <div class="row">
+            <button class="soft" id="relAnalyzeBtn">Analyze Pattern</button>
+            <button class="secondary" id="relSaveBtn">Save Entry</button>
+          </div>
+        </div>
+        <div class="section" style="margin-top:12px;background:#0c1424">
+          <h3>Quick relationship insight</h3>
+          <p class="meta" id="relInsight">${escapeHtml(generateRelationshipInsight())}</p>
+        </div>
+      </div>
+      <div class="section">
+        <div class="toolbar">
+          <h3 style="margin:0">Past entries</h3>
+          <span class="pill">${state.relationship.entries.length} saved</span>
+        </div>
+        <div class="list" id="relEntries"></div>
+      </div>
+    </div>
+  `;
 
-    function currentBot(){
-      return bots.find(b => b.id === state.activeBot) || bots[0];
-    }
-
-    function escapeHtml(str){
-      return str.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-    }
-
-    function renderBots(){
-      els.botStrip.innerHTML = "";
-      bots.forEach(bot => {
-        const btn = document.createElement("button");
-        btn.className = "bot-chip" + (bot.id === state.activeBot ? " active" : "");
-        btn.textContent = bot.name;
-        btn.onclick = () => {
-          state.activeBot = bot.id;
-          saveState();
-          render();
-        };
-        els.botStrip.appendChild(btn);
-      });
-    }
-
-    function renderMessages(){
-      const chat = state.chats[state.activeBot] || [];
-      els.messages.innerHTML = "";
-      chat.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "msg " + (msg.role === "user" ? "user" : msg.role === "system" ? "system" : "ai");
-        div.innerHTML = escapeHtml(msg.content);
-        els.messages.appendChild(div);
-      });
-      els.messages.scrollTop = els.messages.scrollHeight;
-    }
-
-    function renderSettings(){
-      els.modeSelect.value = state.settings.mode;
-      els.modelInput.value = state.settings.model;
-      els.baseUrlInput.value = state.settings.baseUrl;
-      els.apiKeyInput.value = state.settings.apiKey;
-    }
-
-    function render(){
-      const bot = currentBot();
-      els.activeBotName.textContent = bot.name;
-      els.activeBotDesc.textContent = bot.desc;
-      els.prompt.value = state.draft || "";
-      renderBots();
-      renderMessages();
-      renderSettings();
-    }
-
-    function addMessage(role, content){
-      state.chats[state.activeBot] = state.chats[state.activeBot] || [];
-      state.chats[state.activeBot].push({role, content});
-      saveState();
-      renderMessages();
-    }
-
-    function smartLocalReply(bot, userText){
-      const text = userText.trim();
-      const lower = text.toLowerCase();
-
-      if (bot.id === "planner") {
-        return [
-          "Here’s a clean starting plan:",
-          "",
-          "1. Define the goal in one sentence.",
-          "2. Pick the fastest first milestone.",
-          "3. Break it into 3 small tasks.",
-          "4. Decide what to do today.",
-          "",
-          "Based on your message, your next best step is:",
-          "• " + summarize(text, "Turn this into a concrete first action and schedule it today."),
-          "",
-          "If you want, paste the exact goal and I’ll turn it into a full checklist."
-        ].join("\n");
-      }
-
-      if (bot.id === "builder") {
-        return [
-          "Here’s how I’d improve your app next:",
-          "",
-          "• Add a proper chat history sidebar",
-          "• Add bot personas you can edit",
-          "• Add long-term memory / saved notes",
-          "• Add a task panel tied to the Planner bot",
-          "• Add a settings export/import backup",
-          "",
-          "For your request, I’d start with:",
-          "• " + summarize(text, "Build the smallest useful feature first."),
-          "",
-          "Ask me for a feature and I’ll propose the UI, logic, and code structure."
-        ].join("\n");
-      }
-
-      if (bot.id === "thinker") {
-        return [
-          "Let’s think this through carefully.",
-          "",
-          "What stands out:",
-          "• Main issue: " + summarize(text, "The core problem needs to be defined more clearly."),
-          "• Hidden assumption: what you want may differ from what is easiest",
-          "• Tradeoff: speed vs quality, control vs simplicity",
-          "",
-          "Best next step:",
-          "• Write the outcome you want in one sentence, then list the top 2 constraints."
-        ].join("\n");
-      }
-
-      return [
-        "I can help with that.",
-        "",
-        "My first take:",
-        "• " + summarize(text, "This is a good place to start."),
-        "",
-        "Best next step:",
-        "• Give me a little more detail and I’ll make the answer sharper."
-      ].join("\n");
-    }
-
-    function summarize(text, fallback){
-      if (!text) return fallback;
-      const trimmed = text.replace(/\s+/g, " ").trim();
-      if (trimmed.length <= 85) return trimmed;
-      return trimmed.slice(0, 82) + "...";
-    }
-
-    async function callOpenAICompatible(bot, userText){
-      const { apiKey, baseUrl, model } = state.settings;
-      if (!apiKey || !baseUrl || !model) {
-        throw new Error("Missing API settings. Add your API key, base URL, and model in Settings.");
-      }
-
-      const chat = state.chats[state.activeBot] || [];
-      const messages = [
-        { role: "system", content: bot.system },
-        ...chat.filter(m => m.role !== "system").slice(-12).map(m => ({ role: m.role === "ai" ? "assistant" : m.role, content: m.content })),
-        { role: "user", content: userText }
-      ];
-
-      const res = await fetch(baseUrl.replace(/\/$/,"") + "/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + apiKey
-        },
-        body: JSON.stringify({
-          model,
-          messages,
-          temperature: 0.8
-        })
-      });
-
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error("API error: " + res.status + " " + txt);
-      }
-
-      const data = await res.json();
-      const content = data?.choices?.[0]?.message?.content;
-      if (!content) throw new Error("No response content returned.");
-      return content.trim();
-    }
-
-    async function send(){
-      const text = els.prompt.value.trim();
-      if (!text) return;
-
-      state.draft = "";
-      saveState();
-
-      addMessage("user", text);
-      els.prompt.value = "";
-      els.sendBtn.disabled = true;
-      els.sendBtn.textContent = "Thinking...";
-
-      try {
-        const bot = currentBot();
-        let reply = "";
-        if (state.settings.mode === "openai") {
-          reply = await callOpenAICompatible(bot, text);
-        } else {
-          reply = smartLocalReply(bot, text);
-        }
-        addMessage("ai", reply);
-      } catch (err) {
-        addMessage("ai", "I hit an error: " + (err.message || String(err)));
-      } finally {
-        els.sendBtn.disabled = false;
-        els.sendBtn.textContent = "Send";
-      }
-    }
-
-    els.sendBtn.onclick = send;
-    els.prompt.addEventListener("keydown", (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") send();
+  const list = document.getElementById("relEntries");
+  if (!entries.length) {
+    list.innerHTML = `<div class="item"><h4>No entries yet</h4><p>Start by writing what happened today or what pattern you’re worried about.</p></div>`;
+  } else {
+    entries.forEach((entry, idx) => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <h4>${escapeHtml(entry.type)} · ${escapeHtml(entry.mood)}</h4>
+        <p>${escapeHtml(entry.text)}</p>
+        <div class="time">${escapeHtml(entry.time)}</div>
+      `;
+      list.appendChild(div);
     });
+  }
 
-    els.clearBtn.onclick = () => {
-      const bot = currentBot();
-      state.chats[state.activeBot] = [{role:"system", content:"Chat cleared. " + bot.desc}];
-      saveState();
-      renderMessages();
-    };
+  document.getElementById("relType").onchange = e => { state.relationship.currentType = e.target.value; saveState(); };
+  document.getElementById("relMood").onchange = e => { state.relationship.currentMood = e.target.value; saveState(); };
+  document.getElementById("relText").oninput = e => { state.relationship.currentText = e.target.value; saveState(); };
+  document.getElementById("relSaveBtn").onclick = saveRelationshipEntry;
+  document.getElementById("relAnalyzeBtn").onclick = analyzeRelationshipEntry;
+}
 
-    els.exportBtn.onclick = () => {
-      const data = {
-        exportedAt: new Date().toISOString(),
-        activeBot: state.activeBot,
-        chats: state.chats
-      };
-      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "my-ai-team-export.json";
-      a.click();
-      URL.revokeObjectURL(a.href);
-    };
+function generateRelationshipInsight(){
+  if (!state.relationship.entries.length) {
+    return "When you save entries here, this page can help you spot repeating patterns more clearly.";
+  }
+  const moods = state.relationship.entries.map(e => e.mood);
+  const confused = moods.filter(m => m === "Confused").length;
+  const anxious = moods.filter(m => m === "Anxious").length;
+  const redFlags = state.relationship.entries.filter(e => e.type === "Red Flag").length;
+  if (redFlags >= 2 || confused + anxious >= 3) {
+    return "Your entries suggest repeated emotional uncertainty. Try looking for patterns, not just one-off moments, and ask what behavior is consistently making you feel unsettled.";
+  }
+  return "So far your entries look mixed. Keep tracking specific events and how you felt right after each one so the pattern becomes easier to read.";
+}
 
-    els.savePromptBtn.onclick = () => {
-      state.draft = els.prompt.value;
-      saveState();
-      addMessage("system", "Draft saved on this device.");
-    };
+function saveRelationshipEntry(){
+  const text = state.relationship.currentText.trim();
+  if (!text) return;
+  state.relationship.entries.push({
+    type: state.relationship.currentType,
+    mood: state.relationship.currentMood,
+    text,
+    time: nowLabel()
+  });
+  state.relationship.currentText = "";
+  saveState();
+  renderRelationship();
+}
 
-    els.newIdeaBtn.onclick = () => {
-      const ideas = {
-        assistant: "Help me think through a decision I’m stuck on.",
-        thinker: "Analyze this problem from 3 angles and tell me the smartest next step.",
-        planner: "Turn this goal into a 7-day action plan.",
-        builder: "What feature should we add next to make this app more powerful?"
-      };
-      els.prompt.value = ideas[state.activeBot];
-      els.prompt.focus();
-    };
+function analyzeRelationshipEntry(){
+  const text = state.relationship.currentText.trim();
+  if (!text) return alert("Write a journal entry first.");
+  const analysis = [
+    "Pattern check:",
+    "",
+    "• Event summary: " + summarize(text),
+    "• Likely emotional signal: " + state.relationship.currentMood,
+    "• What to ask yourself: Is this an isolated moment, or part of a repeating pattern?",
+    "• Helpful next step: write what you need, what boundary matters, and what behavior would make you feel safer or clearer."
+  ].join("\n");
+  alert(analysis);
+}
 
-    els.settingsBtn.onclick = () => {
-      els.settingsPanel.classList.toggle("open");
-    };
+function renderPlanner(){
+  const tasks = [...state.planner.tasks];
+  const root = document.getElementById("screen-planner");
+  root.innerHTML = `
+    <div class="hero">
+      <h2>Planner</h2>
+      <p>Turn goals into tasks, track weekly focus, and stay organized without overcomplicating things.</p>
+    </div>
+    <div class="split two">
+      <div class="section">
+        <h3>Main goal</h3>
+        <div class="field">
+          <label>What are you trying to achieve?</label>
+          <textarea id="plannerGoal" placeholder="Example: Build my personal AI app into something I use every day.">${escapeHtml(state.planner.goal)}</textarea>
+        </div>
+        <div class="field">
+          <label>This week's focus</label>
+          <input id="plannerFocus" value="${escapeHtml(state.planner.weeklyFocus)}" placeholder="Example: get hosted version live and add one new feature" />
+        </div>
+        <div class="field">
+          <label>Planning notes</label>
+          <textarea id="plannerNotes" placeholder="Anything you want to remember or work through...">${escapeHtml(state.planner.notes)}</textarea>
+        </div>
+        <div class="toolbar">
+          <div class="row">
+            <button class="soft" id="plannerSuggestBtn">Suggest Plan</button>
+            <button class="soft" id="plannerAddTaskBtn">Add Task</button>
+          </div>
+          <button class="secondary" id="plannerSaveBtn">Save Planner</button>
+        </div>
+      </div>
+      <div class="section">
+        <div class="toolbar">
+          <h3 style="margin:0">Tasks</h3>
+          <span class="pill">${tasks.filter(t=>!t.done).length} open</span>
+        </div>
+        <div class="list" id="plannerTasks"></div>
+      </div>
+    </div>
+  `;
 
-    [els.modeSelect, els.modelInput, els.baseUrlInput, els.apiKeyInput].forEach(el => {
-      el.addEventListener("input", () => {
-        state.settings.mode = els.modeSelect.value;
-        state.settings.model = els.modelInput.value.trim();
-        state.settings.baseUrl = els.baseUrlInput.value.trim();
-        state.settings.apiKey = els.apiKeyInput.value.trim();
-        saveState();
-      });
+  const list = document.getElementById("plannerTasks");
+  if (!tasks.length) {
+    list.innerHTML = `<div class="item"><h4>No tasks yet</h4><p>Add a task or let the planner suggest one from your goal.</p></div>`;
+  } else {
+    tasks.forEach((task, i) => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="toolbar">
+          <h4 style="margin:0">${task.done ? "✅ " : ""}${escapeHtml(task.text)}</h4>
+          <div class="row">
+            <button class="soft" data-done="${i}">${task.done ? "Undo" : "Done"}</button>
+            <button class="ghost" data-del="${i}">Delete</button>
+          </div>
+        </div>
+        <div class="time">${escapeHtml(task.time)}</div>
+      `;
+      list.appendChild(div);
     });
+  }
 
-    render();
-  </script>
+  document.getElementById("plannerGoal").oninput = e => { state.planner.goal = e.target.value; saveState(); };
+  document.getElementById("plannerFocus").oninput = e => { state.planner.weeklyFocus = e.target.value; saveState(); };
+  document.getElementById("plannerNotes").oninput = e => { state.planner.notes = e.target.value; saveState(); };
+  document.getElementById("plannerSaveBtn").onclick = () => { saveState(); alert("Planner saved."); };
+  document.getElementById("plannerAddTaskBtn").onclick = addPlannerTask;
+  document.getElementById("plannerSuggestBtn").onclick = suggestPlannerTask;
+
+  list.querySelectorAll("[data-done]").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.getAttribute("data-done"));
+      state.planner.tasks[i].done = !state.planner.tasks[i].done;
+      saveState(); renderPlanner();
+    };
+  });
+  list.querySelectorAll("[data-del]").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.getAttribute("data-del"));
+      state.planner.tasks.splice(i,1);
+      saveState(); renderPlanner();
+    };
+  });
+}
+
+function addPlannerTask(){
+  const task = prompt("What task do you want to add?");
+  if (!task) return;
+  state.planner.tasks.push({text: task.trim(), done:false, time: nowLabel()});
+  saveState();
+  renderPlanner();
+}
+
+function suggestPlannerTask(){
+  const seed = state.planner.goal || state.planner.weeklyFocus || "your goal";
+  const task = "Start with the smallest useful step for: " + summarize(seed);
+  state.planner.tasks.push({text: task, done:false, time: nowLabel()});
+  saveState();
+  renderPlanner();
+}
+
+function renderMemory(){
+  const root = document.getElementById("screen-memory");
+  root.innerHTML = `
+    <div class="hero">
+      <h2>Memory</h2>
+      <p>Keep key facts, goals, reminders, and personal notes in one place so your app stays useful over time.</p>
+    </div>
+    <div class="split two">
+      <div class="section">
+        <h3>About me / profile notes</h3>
+        <textarea id="memoryProfile" placeholder="Write important things your app should remember about you, your goals, or what matters most to you...">${escapeHtml(state.memory.profile)}</textarea>
+        <div class="grid two" style="margin-top:10px">
+          <div class="field">
+            <label>Pin title</label>
+            <input id="memoryPinTitle" value="${escapeHtml(state.memory.currentPinTitle)}" placeholder="Example: Big Goal" />
+          </div>
+          <div class="field">
+            <label>Pin note</label>
+            <input id="memoryPinText" value="${escapeHtml(state.memory.currentPinText)}" placeholder="Example: Launch app and keep improving weekly" />
+          </div>
+        </div>
+        <div class="toolbar" style="margin-top:10px">
+          <div class="tiny">Use pins for the most important things you want easy access to.</div>
+          <div class="row">
+            <button class="soft" id="memoryAddPinBtn">Add Pin</button>
+            <button class="secondary" id="memorySaveBtn">Save Memory</button>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="toolbar">
+          <h3 style="margin:0">Pinned memory</h3>
+          <span class="pill">${state.memory.pinned.length} pins</span>
+        </div>
+        <div class="list" id="memoryPins"></div>
+      </div>
+    </div>
+  `;
+
+  const list = document.getElementById("memoryPins");
+  if (!state.memory.pinned.length) {
+    list.innerHTML = `<div class="item"><h4>No pins yet</h4><p>Add quick memory items like goals, reminders, values, boundaries, or ideas for the app.</p></div>`;
+  } else {
+    [...state.memory.pinned].reverse().forEach((pin, revIndex) => {
+      const realIndex = state.memory.pinned.length - 1 - revIndex;
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="toolbar">
+          <h4 style="margin:0">${escapeHtml(pin.title || "Untitled")}</h4>
+          <button class="ghost" data-remove="${realIndex}">Delete</button>
+        </div>
+        <p>${escapeHtml(pin.text)}</p>
+        <div class="time">${escapeHtml(pin.time)}</div>
+      `;
+      list.appendChild(div);
+    });
+  }
+
+  document.getElementById("memoryProfile").oninput = e => { state.memory.profile = e.target.value; saveState(); };
+  document.getElementById("memoryPinTitle").oninput = e => { state.memory.currentPinTitle = e.target.value; saveState(); };
+  document.getElementById("memoryPinText").oninput = e => { state.memory.currentPinText = e.target.value; saveState(); };
+  document.getElementById("memorySaveBtn").onclick = () => { saveState(); alert("Memory saved."); };
+  document.getElementById("memoryAddPinBtn").onclick = addMemoryPin;
+  list.querySelectorAll("[data-remove]").forEach(btn => {
+    btn.onclick = () => {
+      const i = Number(btn.getAttribute("data-remove"));
+      state.memory.pinned.splice(i,1);
+      saveState();
+      renderMemory();
+    };
+  });
+}
+
+function addMemoryPin(){
+  const title = state.memory.currentPinTitle.trim();
+  const text = state.memory.currentPinText.trim();
+  if (!title && !text) return;
+  state.memory.pinned.push({
+    title: title || "Untitled",
+    text: text || "",
+    time: nowLabel()
+  });
+  state.memory.currentPinTitle = "";
+  state.memory.currentPinText = "";
+  saveState();
+  renderMemory();
+}
+
+function renderSettings(){
+  document.getElementById("settingsPanel").classList.toggle("hide", !state.settingsOpen);
+  document.getElementById("aiMode").value = state.settings.mode;
+  document.getElementById("modelInput").value = state.settings.model;
+  document.getElementById("baseUrlInput").value = state.settings.baseUrl;
+  document.getElementById("apiKeyInput").value = state.settings.apiKey;
+}
+
+function summarize(text){
+  const clean = String(text || "").replace(/\s+/g, " ").trim();
+  return clean.length <= 110 ? clean : clean.slice(0,107) + "...";
+}
+
+function smartLocalReply(chatKey, userText){
+  if (chatKey === "builder") {
+    return [
+      "Here’s the smartest next app move:",
+      "",
+      "• Start with one feature that improves daily usefulness",
+      "• Keep the design simple and fast on iPhone",
+      "• Save everything locally first, then add real AI later",
+      "",
+      "Based on your request:",
+      "• " + summarize(userText),
+      "",
+      "Best next step: ask me for one exact feature and I’ll map the UI and logic for it."
+    ].join("\n");
+  }
+
+  return [
+    "Here’s my first take:",
+    "",
+    "• " + summarize(userText),
+    "• Clarify the main outcome you want",
+    "• Choose the smallest next step that moves things forward",
+    "",
+    "If you give me more detail, I can make this much sharper."
+  ].join("\n");
+}
+
+async function callOpenAICompatible(tabId, userText){
+  const { apiKey, baseUrl, model } = state.settings;
+  if (!apiKey || !baseUrl || !model) throw new Error("Missing API settings in Settings.");
+
+  const chat = state.chats[tabId] || [];
+  const messages = [
+    { role: "system", content: screenPrompts[tabId] || screenPrompts.assistant },
+    ...chat.filter(m => m.role !== "system").slice(-12).map(m => ({
+      role: m.role === "ai" ? "assistant" : m.role,
+      content: m.content
+    })),
+    { role: "user", content: userText }
+  ];
+
+  const res = await fetch(baseUrl.replace(/\/$/,"") + "/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + apiKey
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.8
+    })
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error("API error: " + res.status + " " + txt);
+  }
+
+  const data = await res.json();
+  const content = data?.choices?.[0]?.message?.content;
+  if (!content) throw new Error("No content returned.");
+  return content.trim();
+}
+
+async function sendChat(chatKey){
+  const input = document.getElementById(`${chatKey}-input`);
+  const text = input.value.trim();
+  if (!text) return;
+
+  state.chats[chatKey] = state.chats[chatKey] || [];
+  state.chats[chatKey].push({role:"user", content:text});
+  state[`${chatKey}Draft`] = "";
+  saveState();
+  renderAllScreens();
+
+  try {
+    let reply;
+    if (state.settings.mode === "openai") {
+      reply = await callOpenAICompatible(chatKey, text);
+    } else {
+      reply = smartLocalReply(chatKey, text);
+    }
+    state.chats[chatKey].push({role:"ai", content:reply});
+  } catch (e) {
+    state.chats[chatKey].push({role:"ai", content:"I hit an error: " + (e.message || String(e))});
+  }
+
+  saveState();
+  renderAllScreens();
+}
+
+function exportAll(){
+  const blob = new Blob([JSON.stringify({
+    exportedAt: new Date().toISOString(),
+    data: state
+  }, null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "personal-ai-system-backup.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function wireGlobalSettings(){
+  document.getElementById("settingsToggle").onclick = () => {
+    state.settingsOpen = !state.settingsOpen;
+    saveState();
+    renderSettings();
+  };
+  document.getElementById("exportAllBtn").onclick = exportAll;
+
+  document.getElementById("aiMode").oninput = e => { state.settings.mode = e.target.value; saveState(); };
+  document.getElementById("modelInput").oninput = e => { state.settings.model = e.target.value; saveState(); };
+  document.getElementById("baseUrlInput").oninput = e => { state.settings.baseUrl = e.target.value; saveState(); };
+  document.getElementById("apiKeyInput").oninput = e => { state.settings.apiKey = e.target.value; saveState(); };
+}
+
+function render(){
+  renderTabs();
+  renderAllScreens();
+  wireGlobalSettings();
+}
+
+render();
+</script>
 </body>
 </html>
