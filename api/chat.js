@@ -13,16 +13,21 @@ export default async function handler(req, res) {
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
     const tab = body?.tab || "assistant";
-    const model = body?.model || "gpt-5.4-mini";
+    const model = body?.model || "gpt-4.1-mini";
     const input = body?.input || "";
     const messages = Array.isArray(body?.messages) ? body.messages : [];
 
     const instructionsMap = {
-      assistant: "You are a personal AI assistant. Be practical, warm, concise, and helpful.",
-      relationship: "You are a thoughtful relationship advisor. Help spot patterns, encourage clarity, and support healthy boundaries.",
-      planner: "You are a planning expert. Convert goals into practical plans, timelines, and checklists.",
-      builder: "You are an app strategist and product engineer. Help improve this personal AI system with clear features and implementation ideas.",
-      memory: "You help organize memory and turn saved information into useful summaries and reminders."
+      assistant:
+        "You are a personal AI assistant. Be practical, warm, concise, and helpful.",
+      relationship:
+        "You are a thoughtful relationship advisor. Help spot patterns, encourage clarity, and support healthy boundaries.",
+      planner:
+        "You are a planning expert. Convert goals into practical plans, timelines, and checklists.",
+      builder:
+        "You are an app strategist and product engineer. Help improve this personal AI system with clear features and implementation ideas.",
+      memory:
+        "You help organize memory and turn saved information into useful summaries and reminders."
     };
 
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -35,13 +40,13 @@ export default async function handler(req, res) {
         model,
         instructions: instructionsMap[tab] || instructionsMap.assistant,
         input: [
-          ...messages.map(m => ({
+          ...messages.map((m) => ({
             role: m.role === "ai" ? "assistant" : m.role,
-            content: [{ type: "input_text", text: m.content }]
+            content: m.content
           })),
           {
             role: "user",
-            content: [{ type: "input_text", text: input }]
+            content: input
           }
         ]
       })
@@ -54,11 +59,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    const reply =
-      data.output_text ||
-      data.output?.flatMap(item => item.content || []).find(c => c.type === "output_text")?.text ||
-      "No reply returned.";
-
+    const reply = data.output_text || "No reply returned.";
     res.status(200).json({ reply });
   } catch (error) {
     res.status(500).json({ error: error.message || "Unknown server error" });
