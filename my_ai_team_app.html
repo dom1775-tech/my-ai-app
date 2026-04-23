@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <title>My AI Team</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#111827;
+      --panel-2:#1f2937;
+      --text:#f3f4f6;
+      --muted:#9ca3af;
+      --accent:#60a5fa;
+      --accent-2:#34d399;
+      --danger:#f87171;
+      --border:#334155;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg,#08101d 0%, #0b1220 100%);
+      color:var(--text);
+    }
+    .app{
+      max-width:900px;
+      margin:0 auto;
+      min-height:100dvh;
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      padding:12px;
+      gap:10px;
+    }
+    .topbar, .panel, .composer, .settings{
+      background:rgba(17,24,39,.92);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .topbar{
+      padding:14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position:sticky;
+      top: max(env(safe-area-inset-top), 0px);
+      z-index:3;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid;place-items:center;
+      font-size:22px;font-weight:700;color:#08101d;
+      flex:0 0 auto;
+    }
+    .brand h1{margin:0;font-size:18px;line-height:1.1}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+    .row{display:flex;gap:8px;align-items:center}
+    button, select, input, textarea{
+      font:inherit;
+    }
+    button{
+      border:none;
+      background:var(--panel-2);
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
+      cursor:pointer;
+    }
+    button.primary{
+      background:linear-gradient(135deg,var(--accent),#3b82f6);
+      color:#08101d;
+      font-weight:700;
+    }
+    button.ghost{
+      border:1px solid var(--border);
+      background:transparent;
+    }
+    button:active{transform:translateY(1px)}
+    .bot-strip{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      padding-bottom:2px;
+    }
+    .bot-chip{
+      white-space:nowrap;
+      padding:12px 14px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(31,41,55,.9);
+      color:var(--text);
+    }
+    .bot-chip.active{
+      background:linear-gradient(135deg,var(--accent),#2563eb);
+      color:#08101d;
+      font-weight:700;
+      border-color:transparent;
+    }
+    .panel{
+      padding:12px;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      min-height:48dvh;
+    }
+    .bot-header{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      padding:4px 2px 12px;
+      border-bottom:1px solid rgba(148,163,184,.18);
+    }
+    .bot-header h2{margin:0;font-size:17px}
+    .bot-header p{margin:4px 0 0;color:var(--muted);font-size:13px;max-width:60ch}
+    .messages{
+      padding:10px 2px 4px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:30dvh;
+    }
+    .msg{
+      max-width:85%;
+      padding:12px 14px;
+      border-radius:18px;
+      line-height:1.45;
+      white-space:pre-wrap;
+      word-wrap:break-word;
+    }
+    .msg.user{
+      align-self:flex-end;
+      background:linear-gradient(135deg,#2563eb,#60a5fa);
+      color:#08101d;
+      border-bottom-right-radius:6px;
+      font-weight:600;
+    }
+    .msg.ai{
+      align-self:flex-start;
+      background:#172033;
+      border:1px solid rgba(148,163,184,.18);
+      border-bottom-left-radius:6px;
+    }
+    .msg.system{
+      align-self:center;
+      background:transparent;
+      border:1px dashed rgba(148,163,184,.28);
+      color:var(--muted);
+      font-size:12px;
+      max-width:100%;
+    }
+    .composer{
+      padding:10px;
+      display:grid;
+      gap:8px;
+    }
+    .composer textarea{
+      width:100%;
+      min-height:110px;
+      max-height:240px;
+      resize:vertical;
+      border-radius:16px;
+      padding:14px;
+      background:#0f172a;
+      color:var(--text);
+      border:1px solid var(--border);
+    }
+    .composer .actions{
+      display:flex;
+      gap:8px;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .settings{
+      padding:14px;
+      display:none;
+      gap:12px;
+    }
+    .settings.open{display:grid}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    .field{
+      display:grid;
+      gap:6px;
+    }
+    .field label{
+      color:var(--muted);
+      font-size:13px;
+    }
+    .field input, .field select{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#0f172a;
+      color:var(--text);
+    }
+    .small{font-size:12px;color:var(--muted);line-height:1.45}
+    .danger{color:var(--danger)}
+    .footer-note{color:var(--muted);font-size:12px;text-align:center;padding-bottom:max(6px, env(safe-area-inset-bottom))}
+    @media (min-width: 760px){
+      .grid{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>My AI Team</h1>
+          <p>Your personal bot squad for thinking, planning, and building.</p>
+        </div>
+      </div>
+      <div class="row">
+        <button class="ghost" id="settingsBtn">Settings</button>
+      </div>
+    </div>
+
+    <div class="bot-strip" id="botStrip"></div>
+
+    <div class="panel">
+      <div class="bot-header">
+        <div>
+          <h2 id="activeBotName"></h2>
+          <p id="activeBotDesc"></p>
+        </div>
+        <button class="ghost" id="clearBtn">Clear Chat</button>
+      </div>
+      <div class="messages" id="messages"></div>
+    </div>
+
+    <div class="composer">
+      <textarea id="prompt" placeholder="Ask your AI bot anything..."></textarea>
+      <div class="actions">
+        <div class="row">
+          <button class="ghost" id="savePromptBtn">Save Draft</button>
+          <button class="ghost" id="newIdeaBtn">Prompt Idea</button>
+        </div>
+        <div class="row">
+          <button class="ghost" id="exportBtn">Export</button>
+          <button class="primary" id="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings" id="settingsPanel">
+      <div class="grid">
+        <div class="field">
+          <label>AI mode</label>
+          <select id="modeSelect">
+            <option value="local">Local smart fallback</option>
+            <option value="openai">OpenAI-compatible API</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Model name</label>
+          <input id="modelInput" placeholder="e.g. gpt-4.1-mini" />
+        </div>
+        <div class="field">
+          <label>API base URL</label>
+          <input id="baseUrlInput" placeholder="e.g. https://api.openai.com/v1" />
+        </div>
+        <div class="field">
+          <label>API key</label>
+          <input id="apiKeyInput" type="password" placeholder="Paste your key here" />
+        </div>
+      </div>
+      <div class="small">
+        This app works immediately in <strong>Local smart fallback</strong> mode. To make it truly powerful, switch to
+        <strong>OpenAI-compatible API</strong> and add your API details.
+      </div>
+      <div class="small danger">
+        Your settings are stored only in your browser on this device.
+      </div>
+    </div>
+
+    <div class="footer-note">Add this page to your Home Screen in Safari for an app-like feel.</div>
+  </div>
+
+  <script>
+    const bots = [
+      {
+        id: "assistant",
+        name: "General Assistant",
+        desc: "Balanced help for everyday questions, ideas, and decisions.",
+        system: "You are a versatile personal assistant. Be practical, clear, concise, and helpful. Ask one smart follow-up only when truly needed."
+      },
+      {
+        id: "thinker",
+        name: "Deep Thinker",
+        desc: "Breaks down problems, explores options, and thinks through hard decisions.",
+        system: "You are a deep reasoning partner. Break down complex problems, list assumptions, explore tradeoffs, and end with the clearest next step."
+      },
+      {
+        id: "planner",
+        name: "Planner",
+        desc: "Turns messy goals into clear steps, timelines, and checklists.",
+        system: "You are a planning expert. Turn vague goals into step-by-step plans with milestones, priorities, and the fastest realistic next actions."
+      },
+      {
+        id: "builder",
+        name: "App Builder",
+        desc: "Helps improve this app with features, UI ideas, and build steps.",
+        system: "You are an expert product designer and app engineer. Help extend this app. Suggest specific features, UX improvements, architecture ideas, and implementation steps."
+      }
+    ];
+
+    const storeKey = "my-ai-team-v1";
+    const els = {
+      botStrip: document.getElementById("botStrip"),
+      activeBotName: document.getElementById("activeBotName"),
+      activeBotDesc: document.getElementById("activeBotDesc"),
+      messages: document.getElementById("messages"),
+      prompt: document.getElementById("prompt"),
+      sendBtn: document.getElementById("sendBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      savePromptBtn: document.getElementById("savePromptBtn"),
+      newIdeaBtn: document.getElementById("newIdeaBtn"),
+      settingsBtn: document.getElementById("settingsBtn"),
+      settingsPanel: document.getElementById("settingsPanel"),
+      modeSelect: document.getElementById("modeSelect"),
+      modelInput: document.getElementById("modelInput"),
+      baseUrlInput: document.getElementById("baseUrlInput"),
+      apiKeyInput: document.getElementById("apiKeyInput")
+    };
+
+    const defaultState = {
+      activeBot: "assistant",
+      draft: "",
+      settings: {
+        mode: "local",
+        model: "gpt-4.1-mini",
+        baseUrl: "https://api.openai.com/v1",
+        apiKey: ""
+      },
+      chats: {
+        assistant: [{role:"system", content:"Welcome to your AI Team. Pick a bot and start chatting."}],
+        thinker: [{role:"system", content:"Ask me something complex and I’ll help break it down."}],
+        planner: [{role:"system", content:"Give me a goal and I’ll turn it into a plan."}],
+        builder: [{role:"system", content:"Tell me what feature you want next, and I’ll help design it."}]
+      }
+    };
+
+    function loadState(){
+      try {
+        return {...defaultState, ...JSON.parse(localStorage.getItem(storeKey) || "{}")};
+      } catch(e){
+        return structuredClone(defaultState);
+      }
+    }
+
+    let state = loadState();
+
+    function saveState(){
+      localStorage.setItem(storeKey, JSON.stringify(state));
+    }
+
+    function currentBot(){
+      return bots.find(b => b.id === state.activeBot) || bots[0];
+    }
+
+    function escapeHtml(str){
+      return str.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    function renderBots(){
+      els.botStrip.innerHTML = "";
+      bots.forEach(bot => {
+        const btn = document.createElement("button");
+        btn.className = "bot-chip" + (bot.id === state.activeBot ? " active" : "");
+        btn.textContent = bot.name;
+        btn.onclick = () => {
+          state.activeBot = bot.id;
+          saveState();
+          render();
+        };
+        els.botStrip.appendChild(btn);
+      });
+    }
+
+    function renderMessages(){
+      const chat = state.chats[state.activeBot] || [];
+      els.messages.innerHTML = "";
+      chat.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "msg " + (msg.role === "user" ? "user" : msg.role === "system" ? "system" : "ai");
+        div.innerHTML = escapeHtml(msg.content);
+        els.messages.appendChild(div);
+      });
+      els.messages.scrollTop = els.messages.scrollHeight;
+    }
+
+    function renderSettings(){
+      els.modeSelect.value = state.settings.mode;
+      els.modelInput.value = state.settings.model;
+      els.baseUrlInput.value = state.settings.baseUrl;
+      els.apiKeyInput.value = state.settings.apiKey;
+    }
+
+    function render(){
+      const bot = currentBot();
+      els.activeBotName.textContent = bot.name;
+      els.activeBotDesc.textContent = bot.desc;
+      els.prompt.value = state.draft || "";
+      renderBots();
+      renderMessages();
+      renderSettings();
+    }
+
+    function addMessage(role, content){
+      state.chats[state.activeBot] = state.chats[state.activeBot] || [];
+      state.chats[state.activeBot].push({role, content});
+      saveState();
+      renderMessages();
+    }
+
+    function smartLocalReply(bot, userText){
+      const text = userText.trim();
+      const lower = text.toLowerCase();
+
+      if (bot.id === "planner") {
+        return [
+          "Here’s a clean starting plan:",
+          "",
+          "1. Define the goal in one sentence.",
+          "2. Pick the fastest first milestone.",
+          "3. Break it into 3 small tasks.",
+          "4. Decide what to do today.",
+          "",
+          "Based on your message, your next best step is:",
+          "• " + summarize(text, "Turn this into a concrete first action and schedule it today."),
+          "",
+          "If you want, paste the exact goal and I’ll turn it into a full checklist."
+        ].join("\n");
+      }
+
+      if (bot.id === "builder") {
+        return [
+          "Here’s how I’d improve your app next:",
+          "",
+          "• Add a proper chat history sidebar",
+          "• Add bot personas you can edit",
+          "• Add long-term memory / saved notes",
+          "• Add a task panel tied to the Planner bot",
+          "• Add a settings export/import backup",
+          "",
+          "For your request, I’d start with:",
+          "• " + summarize(text, "Build the smallest useful feature first."),
+          "",
+          "Ask me for a feature and I’ll propose the UI, logic, and code structure."
+        ].join("\n");
+      }
+
+      if (bot.id === "thinker") {
+        return [
+          "Let’s think this through carefully.",
+          "",
+          "What stands out:",
+          "• Main issue: " + summarize(text, "The core problem needs to be defined more clearly."),
+          "• Hidden assumption: what you want may differ from what is easiest",
+          "• Tradeoff: speed vs quality, control vs simplicity",
+          "",
+          "Best next step:",
+          "• Write the outcome you want in one sentence, then list the top 2 constraints."
+        ].join("\n");
+      }
+
+      return [
+        "I can help with that.",
+        "",
+        "My first take:",
+        "• " + summarize(text, "This is a good place to start."),
+        "",
+        "Best next step:",
+        "• Give me a little more detail and I’ll make the answer sharper."
+      ].join("\n");
+    }
+
+    function summarize(text, fallback){
+      if (!text) return fallback;
+      const trimmed = text.replace(/\s+/g, " ").trim();
+      if (trimmed.length <= 85) return trimmed;
+      return trimmed.slice(0, 82) + "...";
+    }
+
+    async function callOpenAICompatible(bot, userText){
+      const { apiKey, baseUrl, model } = state.settings;
+      if (!apiKey || !baseUrl || !model) {
+        throw new Error("Missing API settings. Add your API key, base URL, and model in Settings.");
+      }
+
+      const chat = state.chats[state.activeBot] || [];
+      const messages = [
+        { role: "system", content: bot.system },
+        ...chat.filter(m => m.role !== "system").slice(-12).map(m => ({ role: m.role === "ai" ? "assistant" : m.role, content: m.content })),
+        { role: "user", content: userText }
+      ];
+
+      const res = await fetch(baseUrl.replace(/\/$/,"") + "/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + apiKey
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature: 0.8
+        })
+      });
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error("API error: " + res.status + " " + txt);
+      }
+
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content;
+      if (!content) throw new Error("No response content returned.");
+      return content.trim();
+    }
+
+    async function send(){
+      const text = els.prompt.value.trim();
+      if (!text) return;
+
+      state.draft = "";
+      saveState();
+
+      addMessage("user", text);
+      els.prompt.value = "";
+      els.sendBtn.disabled = true;
+      els.sendBtn.textContent = "Thinking...";
+
+      try {
+        const bot = currentBot();
+        let reply = "";
+        if (state.settings.mode === "openai") {
+          reply = await callOpenAICompatible(bot, text);
+        } else {
+          reply = smartLocalReply(bot, text);
+        }
+        addMessage("ai", reply);
+      } catch (err) {
+        addMessage("ai", "I hit an error: " + (err.message || String(err)));
+      } finally {
+        els.sendBtn.disabled = false;
+        els.sendBtn.textContent = "Send";
+      }
+    }
+
+    els.sendBtn.onclick = send;
+    els.prompt.addEventListener("keydown", (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") send();
+    });
+
+    els.clearBtn.onclick = () => {
+      const bot = currentBot();
+      state.chats[state.activeBot] = [{role:"system", content:"Chat cleared. " + bot.desc}];
+      saveState();
+      renderMessages();
+    };
+
+    els.exportBtn.onclick = () => {
+      const data = {
+        exportedAt: new Date().toISOString(),
+        activeBot: state.activeBot,
+        chats: state.chats
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "my-ai-team-export.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    };
+
+    els.savePromptBtn.onclick = () => {
+      state.draft = els.prompt.value;
+      saveState();
+      addMessage("system", "Draft saved on this device.");
+    };
+
+    els.newIdeaBtn.onclick = () => {
+      const ideas = {
+        assistant: "Help me think through a decision I’m stuck on.",
+        thinker: "Analyze this problem from 3 angles and tell me the smartest next step.",
+        planner: "Turn this goal into a 7-day action plan.",
+        builder: "What feature should we add next to make this app more powerful?"
+      };
+      els.prompt.value = ideas[state.activeBot];
+      els.prompt.focus();
+    };
+
+    els.settingsBtn.onclick = () => {
+      els.settingsPanel.classList.toggle("open");
+    };
+
+    [els.modeSelect, els.modelInput, els.baseUrlInput, els.apiKeyInput].forEach(el => {
+      el.addEventListener("input", () => {
+        state.settings.mode = els.modeSelect.value;
+        state.settings.model = els.modelInput.value.trim();
+        state.settings.baseUrl = els.baseUrlInput.value.trim();
+        state.settings.apiKey = els.apiKeyInput.value.trim();
+        saveState();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
